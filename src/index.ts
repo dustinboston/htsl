@@ -151,7 +151,10 @@ export function getRule(node: postcss.ChildNode): Vertex | undefined {
 
 export function vertexToHTML(vertex: Vertex): string {
   const attrs = vertex.attrs
-    .map((attr) => `${attr.prop.slice(1)}=${attr.value}`) // Remove the leading \\
+    .map((attr) => {
+      const prop = attr.prop.startsWith('\\') ? attr.prop.slice(1) : attr.prop;
+      return `${prop}=${attr.value}`;
+    })
     .join(" ")
     .trim();
 
@@ -185,10 +188,8 @@ export function vertexToHTML(vertex: Vertex): string {
   return `<${vertex.tag}${attrsString}>${content}${children}</${vertex.tag}>`;
 }
 
-async function main() {
-  const cssSource = await Bun.file("html.css").text();
+export async function processCss(cssSource: string): Promise<string> {
   const htmlAst = postcss.parse(cssSource);
-  const cssAst = postcss.parse(cssSource);
 
   // --- Variable Collection ---
   htmlAst.walkDecls((decl) => {
@@ -202,27 +203,5 @@ async function main() {
     .map((node) => getRule(node))
     .filter((vertex): vertex is Vertex => vertex !== undefined);
 
-  const html = vertices.map((vertex) => vertexToHTML(vertex)).join("\n");
-
-  // --- CSS Generation ---
-  cssAst.walkDecls((decl) => {
-    if (!isStyle(decl.prop)) {
-      decl.remove();
-    }
-  });
-
-  // Remove custom properties that start with -- (HTML attributes)
-  cssAst.walkRules(ATTR_REGEXP, (rule) => {
-    rule.remove();
-  });
-
-  const stylesheet = cssAst.toString();
-
-  // --- File Writing ---
-  await Bun.write("dist/index.html", html);
-  await Bun.write("dist/styles.css", stylesheet);
-
-  console.log("Build complete. Files are in the dist directory.");
+  return vertices.map((vertex) => vertexToHTML(vertex)).join("\n");
 }
-
-main();

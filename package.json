@@ -2,10 +2,14 @@
   "name": "html-css",
   "module": "src/index.ts",
   "type": "module",
+  "bin": {
+    "html-css": "dist/cli.js"
+  },
   "scripts": {
-    "build": "bun ./src/index.ts",
+    "build": "bun build ./src/cli.ts --outdir dist --format esm",
     "start": "bun ./server.ts",
-    "dev": "bun run build && bun run start"
+    "dev": "bun run build && bun run start",
+    "prepublishOnly": "bun run build"
   },
   "devDependencies": {
     "@types/bun": "latest"

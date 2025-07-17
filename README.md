@@ -4,21 +4,46 @@
 
 ## Quick Start
 
+1.  **Install the CLI:**
+    ```bash
+    npm install -g htsl
+    ```
+
+2.  **Convert your HTSL file:**
+    ```bash
+    htsl <input-file.css> [options]
+    ```
+
+    **Example:**
+    ```bash
+    htsl html.css -o my-output
+    ```
+    This will create a `my-output` directory with the compiled `html.html` file inside.
+
+## Development
+
 1.  **Install dependencies:**
     ```bash
     bun install
     ```
 
-2.  **Build the HTML:**
-    This command reads `html.css` and outputs the compiled `css.html`.
+2.  **Build the project:**
+    This command transpiles the TypeScript files to JavaScript and outputs them to the `dist` directory.
     ```bash
     bun run build
     ```
 
 3.  **Run the development server:**
-    This will build the HTML and serve it on `http://localhost:3000`.
+    This will serve the `dist` directory on `http://localhost:3000`.
     ```bash
-    bun run dev
+    bun run start
+    ```
+
+4.  **Publish to NPM:**
+    To publish the package to NPM, you'll need to be logged in to your NPM account.
+
+    ```bash
+    npm publish
     ```
 
 ## Syntax
@@ -71,18 +96,18 @@ Compiles to:
 
 ### Attributes
 
-Attributes can be added to elements by using the `\\` (backslash) prefix. By
-prefixing a selector with `\\` you tell the parser that this selector is an HTML
+Attributes can be added to elements by using the `\` (backslash) prefix. By
+prefixing a selector with `\` you tell the parser that this selector is an HTML
 attribute. These must always be selectors as they are not valid CSS properties.
 
 **Example:**
 
 ```css
 input {
-  \\placeholder {
+  \placeholder {
     content: "Enter your name";
   }
-  \\type {
+  \type {
     content: "text";
   }
 }
